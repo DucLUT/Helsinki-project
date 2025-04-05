@@ -19,7 +19,7 @@ const LoginForm = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:!ring-red-500 focus:!border-red-500 text-gray-900"
             required
           />
         </div>
@@ -36,7 +36,7 @@ const LoginForm = () => {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:!ring-red-500 focus:!border-red-500 text-gray-900"
             required
           />
         </div>
