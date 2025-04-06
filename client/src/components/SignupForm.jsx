@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { signupUser } from "../reducers/authReducer";
+import { useDispatch } from "react-redux";
 
 const SignupForm = () => {
   const [name, setName] = useState("");
@@ -8,6 +10,7 @@ const SignupForm = () => {
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [genderPreference, setGenderPreference] = useState("");
+  const dispatch = useDispatch();
 
   const signup = () => {
     if (password !== confirmPassword) {
@@ -23,9 +26,8 @@ const SignupForm = () => {
       gender,
       genderPreference,
     };
-
+    dispatch(signupUser(userData));
     console.log("User data:", userData);
-    alert("Signup successful!");
   };
 
   return (

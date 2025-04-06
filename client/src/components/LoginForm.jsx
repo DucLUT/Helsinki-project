@@ -1,12 +1,23 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../reducers/authReducer";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const userData = {
+      email,
+      password,
+    };
+    dispatch(loginUser(userData));
+  };
 
   return (
     <div>
-      <form>
+      <form onSubmit={handleLogin} className="space-y-6">
         <div className="mb-4">
           <label
             htmlFor="email"
