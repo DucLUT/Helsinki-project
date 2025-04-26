@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Heart, Loader, MessageCircle, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { fetchMatches } from "../reducers/matchReducer";
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const toggleSidebar = () => setIsOpen(!isOpen);
   const dispatch = useDispatch();
-  const { matches, loading } = useSelector((state) => state.match);
+  const { matches, isLoadingMyMatches } = useSelector((state) => state.match);
 
   useEffect(() => {
     dispatch(fetchMatches());
@@ -37,7 +36,7 @@ const Sidebar = () => {
 
           {/* Scrollable Matches Section */}
           <div className="flex-grow overflow-y-auto p-4 z-10 relative bg-gray-50">
-            {loading ? (
+            {isLoadingMyMatches ? (
               <LoadingState />
             ) : matches.length === 0 ? (
               <NoMatchesFound />

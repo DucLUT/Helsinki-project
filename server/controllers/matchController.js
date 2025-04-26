@@ -100,31 +100,35 @@ export const getMatches = async (req, res) => {
 }
 
 export const getUserProfiles = async (req, res) => {
-    try {
-        const currentUser = await User.findById(req.user.id);  
-        const users = await User.find({
-            $and: [
-                { _id: { $ne: currentUser._id } }, // Exclude current user
-                { _id: { $nin: currentUser.matches } }, // Exclude matched users
-                { _id: { $nin: currentUser.likes } }, // Exclude like users
-                { _id: { $nin: currentUser.dislikes } }, // Exclude dislike users
-                {
-                    gender: currentUser.preferredGender === "both" ? { $in:["male","female"] } : currentUser.preferredGender
-                },
-                {genderPreference: {$in: [currentUser.gender, "both"]}}, //always find the same entity that same preference
-            ],
-        }
-        );
-        res.status(200).json({
-            success: true,
-            users: users,
-        });
-    } catch (error) {
-        console.error("Error in getUserProfiles: ", error);
-        res.status(500).json({
-            success: false,
-            message: "Internal server error",
-        });
-        
-    }
-}
+	try {
+		const currentUser = await User.findById(req.user.id);
+
+		const users = await User.find({
+			$and: [
+				{ _id: { $ne: currentUser.id } }, // Exclude current user
+				{ _id: { $nin: currentUser.likes } }, // Exclude users already liked
+				{ _id: { $nin: currentUser.dislikes } }, // Exclude users already disliked
+				{ _id: { $nin: currentUser.matches } }, // Exclude users already matched
+				{
+					gender:
+						currentUser.genderPreference === "both"
+							? { $in: ["male", "female"] }
+							: currentUser.genderPreference,
+				}, // Filter by gender preference
+				{ genderPreference: { $in: [currentUser.gender, "both"] } }, // Exclude users who don't match the preference
+			],
+		});
+
+		res.status(200).json({
+			success: true,
+			users,
+		});
+	} catch (error) {
+		console.log("Error in getUserProfiles: ", error);
+
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+		});
+	}
+};
