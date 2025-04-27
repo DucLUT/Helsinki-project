@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast"
 import { check, signup, logout, login } from "../services/auth";
-import { initializeSocket } from "../socket/socket";
+import { initializeSocket, disconnectSocket } from "../socket/socket";
 
 const authSlice = createSlice({
     name:"auth",
@@ -24,8 +24,9 @@ export const checkAuth = () => {
     return async (dispatch) => {
         try {
             const res = await check(); 
+            console.log("check the auth", res);
             dispatch(setAuthUser(res)); 
-            initializeSocket(res.data.user._id);
+            initializeSocket(res.user._id);
         } catch (error) {
             console.error("Error during checkAuth:", error);
             dispatch(clearAuthUser()); 
@@ -54,7 +55,7 @@ export const loginUser = (data) => {
             const res = await login(data); 
             toast.success("Logged in successfully");
             dispatch(setAuthUser(res)); 
-            initializeSocket(res.data.user._id);
+            initializeSocket(res.user._id);
         } catch (error) {
             console.error("Error during login:", error);
             const errorMessage = error.response?.data?.message || "An error occurred during login";
@@ -68,6 +69,7 @@ export const logOut = () => {
         try {
             await logout(); 
             dispatch(clearAuthUser());
+            disconnectSocket();
             toast.success("Logged out successfully");
         } catch (error) {
             console.error("Error during logout:", error);
