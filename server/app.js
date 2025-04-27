@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { createServer } from "http";
 const app = express();
+import { initializeSocket } from "./socket/socket.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
@@ -9,6 +11,8 @@ import messageRoutes from "./routes/messageRoutes.js";
 import { connectDB } from "./config/db.js";
 
 connectDB();
+export const httpServer = createServer(app); 
+initializeSocket(httpServer);
 
 const corsOptions = {
   origin: "http://localhost:5173", // Replace with your frontend's URL

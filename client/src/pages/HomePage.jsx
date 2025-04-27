@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { logOut } from "../reducers/authReducer";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUserProfiles } from "../reducers/matchReducer";
 import Sidebar from "../components/Sidebar";

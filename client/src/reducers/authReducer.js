@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast"
 import { check, signup, logout, login } from "../services/auth";
+import { initializeSocket } from "../socket/socket";
 
 const authSlice = createSlice({
     name:"auth",
@@ -22,8 +23,9 @@ export const { setAuthUser, clearAuthUser } = authSlice.actions;
 export const checkAuth = () => {
     return async (dispatch) => {
         try {
-            const user = await check(); 
-            dispatch(setAuthUser(user)); 
+            const res = await check(); 
+            dispatch(setAuthUser(res)); 
+            initializeSocket(res.data.user._id);
         } catch (error) {
             console.error("Error during checkAuth:", error);
             dispatch(clearAuthUser()); 
@@ -34,9 +36,10 @@ export const checkAuth = () => {
 export const signupUser = (data) => {
     return async (dispatch) => {
         try {
-            const user = await signup(data); 
+            const res = await signup(data); 
             toast.success("Sign up successfully");
-            dispatch(setAuthUser(user)); 
+            dispatch(setAuthUser(res)); 
+            initializeSocket(res.data.user._id);
         } catch (error) {
             console.error("Error during signup:", error);
             const errorMessage = error.response?.data?.message || "An error occurred during signup";
@@ -48,9 +51,10 @@ export const signupUser = (data) => {
 export const loginUser = (data) => {
     return async (dispatch) => {
         try {
-            const user = await login(data); 
+            const res = await login(data); 
             toast.success("Logged in successfully");
-            dispatch(setAuthUser(user)); 
+            dispatch(setAuthUser(res)); 
+            initializeSocket(res.data.user._id);
         } catch (error) {
             console.error("Error during login:", error);
             const errorMessage = error.response?.data?.message || "An error occurred during login";
