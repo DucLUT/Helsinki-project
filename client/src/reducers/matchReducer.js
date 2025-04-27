@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast"
-import { getMatches, getUserProfiles } from "../services/match";
+import { getMatches, getUserProfiles, left, right } from "../services/match";
+
 
 const matchSlice = createSlice({
     name: "match",
@@ -9,6 +10,7 @@ const matchSlice = createSlice({
         isLoadingMyMatches: false,
         isLoadingMyUserProfiles: false, 
         userProfiles: [],
+        info: null,
     },
     reducers: {
         setMatches: (state, action) => {
@@ -22,11 +24,14 @@ const matchSlice = createSlice({
         },
         setUserProfiles: (state, action) => {
             state.userProfiles = action.payload;
+        },
+        setInfo: (state, action) => {
+            state.info = action.payload;
         }
     },
 });
 
-export const { setMatches, setIsLoadingMyMatches,  setIsLoadingMyUserProfiles, setUserProfiles} = matchSlice.actions;
+export const { setMatches, setIsLoadingMyMatches,  setIsLoadingMyUserProfiles, setUserProfiles, setInfo} = matchSlice.actions;
 
 export const fetchMatches = () => {
     return async (dispatch) => {
@@ -61,6 +66,40 @@ export const fetchUserProfiles = () => {
 };
 
 export const swipeLeft = (user) => {
-    
+    return async (dispatch) => {
+        try {
+            const response = await left(user._id);
+            console.log("Swipe Left Response:", response);
+            dispatch(fetchMatches());
+            dispatch(setInfo("passed"));
+        } catch (error) {
+            console.error("Error during swipeLeft:", error);
+            toast.error(error.response.data.message || "Failed to swipe left");
+        } finally {
+            setTimeout(() => {
+                dispatch(setInfo(null));
+            }, 2000);
+        }
+    };
+};
+
+export const swipeRight = (user) => {
+    return async (dispatch) => {
+        try {
+            const response = await right(user._id);
+            dispatch(fetchMatches());
+            dispatch(setInfo("liked"));
+            
+        } catch (error) {
+            console.error("Error during swipeRight:", error);
+            toast.error(error.response.data.message || "Failed to swipe right");
+        } finally {
+            setTimeout(() => {
+                dispatch(setInfo(null));
+            }, 2000);
+        }
+    };
 }
+
+
 export default matchSlice.reducer;

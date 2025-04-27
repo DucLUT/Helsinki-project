@@ -33,7 +33,7 @@ const HomePage = () => {
         <main className="flex-grow flex flex-col gap-10 justify-center items-center p-4 relative overflow-hidden">
           {userProfiles.length > 0 && !isLoadingUserProfiles && (
             <>
-              <Frown className="text-pink-400 mb-6" size={80} />
+              <InfoArea />
               <CoreArea />
               <InfoArea />
             </>

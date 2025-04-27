@@ -52,15 +52,19 @@ export const swipeRight = async (req, res) => {
 
 export const swipeLeft = async (req, res) => {
     try {
-        const {dislikeUserId} = req.params;
+        const { dislikedUserId } = req.params;
         const currentUser = await User.findById(req.user.id);
-        if (currentUser.dislikes.includes(dislikeUserId)) {
+        console.log("Current User:", currentUser);
+        console.log("Dislike User ID:", dislikedUserId );
+
+        if (currentUser.dislikes.includes(dislikedUserId)) {
             return res.status(400).json({
                 success: false,
                 message: "User already disliked",
             });
         }
-        currentUser.dislikes.push(dislikeUserId);
+
+        currentUser.dislikes.push(dislikedUserId );
         await currentUser.save();
         res.status(200).json({
             success: true,
@@ -68,15 +72,13 @@ export const swipeLeft = async (req, res) => {
             message: "User disliked successfully",
         });
     } catch (error) {
-        console.log("Error in swipeLeft: ", error);
+        console.log("Error in swipeLeft:", error);
         return res.status(500).json({
             success: false,
             message: "Internal server error",
         });
-        
     }
-}
-
+};
 export const getMatches = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).populate("matches", "name image");

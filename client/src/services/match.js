@@ -13,4 +13,14 @@ export const getUserProfiles = async () => {
     return res.data;
 }
 
-export const left = async (user)
+export const left = async (userId) => {
+    const res = await axiosInstance.post(`/matches/swipe-left/${userId}`);
+    console.log("API Response in left:", res.data); // Log the response
+    return res.data;
+}
+
+export const right = async (userId) => {
+    const res = await axiosInstance.post(`/matches/swipe-right/${userId}`);
+    console.log("API Response in right:", res.data); // Log the response
+    return res.data;
+}
