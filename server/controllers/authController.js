@@ -43,6 +43,7 @@ export const signup = async (req, res) => {
             success: true,
             message: "User created successfully",
             token, //just for testing remember to delete this
+            user: newUser
         });
     } catch (error) {
         console.log(error);
@@ -75,6 +76,7 @@ export const login = async (req, res) => {
             success: true,
             message: "User logged in successfully",
             token, //just for testing remember to delete this
+            user
         });
     } catch (error) {
         console.log(error);

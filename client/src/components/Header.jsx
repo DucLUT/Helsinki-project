@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "../reducers/authReducer";
 const Header = () => {
   const dispatch = useDispatch();
-  const authUser = useSelector((state) => state.auth.authUser);
+  const { authUser, loading } = useSelector((state) => state.auth);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -25,6 +25,11 @@ const Header = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+  if (loading) {
+    return (
+      <div className="p-4 text-center text-white bg-pink-500">Loading...</div>
+    );
+  }
   return (
     <div>
       <header className="bg-gradient-to-r from-pink-200 via-pink-500 to-pink-700 text-white shadow-lg">

@@ -1,4 +1,5 @@
 import Message from "../models/Message.js";
+import { getIO, getConnectedUsers } from "../socket/socket.js"; // Adjust the import path as necessary
 export const sendMessage = async (req, res) => {
     try {
         const {content, receiverId} = req.body;
@@ -7,12 +8,26 @@ export const sendMessage = async (req, res) => {
             receiver: receiverId,
             content,
         });
-        
+
+        const io = getIO();
+        const connectedUsers = getConnectedUsers();
+        const receiverSocketId = connectedUsers.get(receiverId);
+
+
+
         res.status(200).json({
             success: true,
             message: "Message sent successfully",
             message: newMessage,
         });
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("newMessage", {
+                message: newMessage,
+                sender: req.user.id,
+            });
+        } else {
+            console.log("Receiver is not connected");
+        }
     } catch (error) {
         console.log("Error in sendMessage: ", error);
         return res.status(500).json({

@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchUserProfiles } from "../reducers/matchReducer";
+import {
+  fetchUserProfiles,
+  listenToNewMatches,
+  unsubscribeToNewMatches,
+} from "../reducers/matchReducer";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { Frown } from "lucide-react";
@@ -16,6 +20,7 @@ const HomePage = () => {
   const { userProfiles, isLoadingUserProfiles } = useSelector(
     (state) => state.match
   );
+  const { authUser } = useSelector((state) => state.auth);
   useEffect(() => {
     dispatch(fetchUserProfiles());
   }, [dispatch]);
@@ -23,6 +28,12 @@ const HomePage = () => {
     "checking if this works for user profiles matchable: ",
     userProfiles
   );
+  useEffect(() => {
+    authUser && dispatch(listenToNewMatches());
+    return () => {
+      dispatch(unsubscribeToNewMatches());
+    };
+  }, [dispatch, authUser]);
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 overflow-hidden">

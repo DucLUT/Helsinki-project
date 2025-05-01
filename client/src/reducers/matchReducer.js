@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast"
 import { getMatches, getUserProfiles, left, right } from "../services/match";
+import { getSocket } from "../socket/socket";
 
 
 const matchSlice = createSlice({
@@ -64,7 +65,6 @@ export const fetchUserProfiles = () => {
         }
     };
 };
-
 export const swipeLeft = (user) => {
     return async (dispatch) => {
         try {
@@ -100,6 +100,37 @@ export const swipeRight = (user) => {
         }
     };
 }
+
+
+export const listenToNewMatches = () => {
+  return async (dispatch, getState) => {
+    try {
+      const socket = getSocket();
+      socket.on("newMatch", (newMatch) => {
+        const currentMatches = getState().match.matches;
+        dispatch(setMatches([...currentMatches, newMatch]));
+        toast.success("You have a new match!");
+        console.log("New match received:", newMatch);
+      });
+    } catch (error) {
+      console.error("Error during listenToNewMatches:", error);
+    }
+  };
+};
+
+
+export const unsubscribeToNewMatches = () => {
+    return async (dispatch) => {
+        try {
+            const socket = getSocket();
+            socket.off("newMatch");
+        } catch (error) {
+            console.error("Error during unsubscribeToNewMatches:", error);
+            
+        }
+    }
+}
+
 
 
 export default matchSlice.reducer;

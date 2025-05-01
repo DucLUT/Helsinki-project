@@ -6,7 +6,8 @@ import { initializeSocket, disconnectSocket } from "../socket/socket";
 const authSlice = createSlice({
     name:"auth",
     initialState: {
-        authUser: null
+        authUser: null,
+        loading: true,
     },
     reducers: {
         setAuthUser: (state, action) => {
@@ -14,25 +15,32 @@ const authSlice = createSlice({
         },
         clearAuthUser: (state) => {
             state.authUser = null;
-        }
+        },
+        setLoading: (state, action) => {
+            state.loading = action.payload;
+        },
+
     }
 })
 
-export const { setAuthUser, clearAuthUser } = authSlice.actions;
+export const { setAuthUser, clearAuthUser , setLoading} = authSlice.actions;
 
 export const checkAuth = () => {
     return async (dispatch) => {
+        dispatch(setLoading(true)); // Start loading
         try {
             const res = await check(); 
-            console.log("check the auth", res);
             dispatch(setAuthUser(res)); 
             initializeSocket(res.user._id);
         } catch (error) {
             console.error("Error during checkAuth:", error);
             dispatch(clearAuthUser()); 
+        } finally {
+            dispatch(setLoading(false)); // End loading
         }
     };
 };
+
 
 export const signupUser = (data) => {
     return async (dispatch) => {
@@ -40,7 +48,7 @@ export const signupUser = (data) => {
             const res = await signup(data); 
             toast.success("Sign up successfully");
             dispatch(setAuthUser(res)); 
-            initializeSocket(res.data.user._id);
+            initializeSocket(res.user._id);
         } catch (error) {
             console.error("Error during signup:", error);
             const errorMessage = error.response?.data?.message || "An error occurred during signup";
@@ -52,7 +60,8 @@ export const signupUser = (data) => {
 export const loginUser = (data) => {
     return async (dispatch) => {
         try {
-            const res = await login(data); 
+            const res = await login(data);
+            console.log("Login response:", res);
             toast.success("Logged in successfully");
             dispatch(setAuthUser(res)); 
             initializeSocket(res.user._id);
@@ -76,6 +85,6 @@ export const logOut = () => {
             toast.error("An error occurred during logout");
         }
     };
-}
+};
 
 export default authSlice.reducer
