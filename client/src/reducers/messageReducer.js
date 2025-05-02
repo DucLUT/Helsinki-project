@@ -26,13 +26,59 @@ export const fetchMessages = (userId) => {
         dispatch(setLoading(true));
         try {
             const res = await conversation(userId);
-            dispatch(setMessages(res));
+            dispatch(setMessages(res.messages));
             dispatch(setLoading(false));
         } catch (error) {
             console.error("Error during fetchMessages:", error);
             toast.error(error.response.data.message || "Failed to fetch messages");
             dispatch(setLoading(false));
         }
-}}
+}};
+
+export const sendMessage = (receiverId, content) => {
+    return async (dispatch, getState) => {
+        try {
+            const currentMessages = getState().message.messages;
+            const newMessage = {
+                senderId: getState().auth.user.id,
+                receiverId,
+                content,
+                createdAt: new Date().toISOString(),
+            };
+
+            // Update the local state immediately
+            dispatch(setMessages([...currentMessages, newMessage]));
+            // Send the message through the socket
+            
+            const res = await message({ receiverId, content });
+            console.log("API response wehn sending message:", res); 
+        } catch (error) {
+            toast.error(error.response.data.message || "Failed to send message");
+        }
+
+    };
+};
+
+export const listenToMessages = () => {
+  return (dispatch, getState) => {
+    const socket = getSocket();
+
+    socket.on("newMessage", (payload) => {
+      const currentMessages = getState().message.messages;
+
+      // Assuming payload.message is a single message object
+      dispatch(setMessages([...currentMessages, payload.message]));
+    });
+  };
+};
+
+export const unsubscribeToMessages = () => {
+  return (dispatch) => {
+    const socket = getSocket();
+
+    socket.off("newMessage");
+  };
+};
+
 
 export default messageSlice.reducer;
