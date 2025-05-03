@@ -1,7 +1,7 @@
 import { getSocket } from "../socket/socket";
 import { createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
-import {message, conversation} from "../services/message";
+import {send, conversation} from "../services/message";
 
 
 const messageSlice = createSlice({
@@ -50,7 +50,7 @@ export const sendMessage = (receiverId, content) => {
             dispatch(setMessages([...currentMessages, newMessage]));
             // Send the message through the socket
             
-            const res = await message({ receiverId, content });
+            const res = await send({ receiverId, content });
             console.log("API response wehn sending message:", res); 
         } catch (error) {
             toast.error(error.response.data.message || "Failed to send message");
@@ -71,14 +71,26 @@ export const listenToMessages = () => {
     });
   };
 };
-
 export const unsubscribeToMessages = () => {
-  return (dispatch) => {
-    const socket = getSocket();
-
-    socket.off("newMessage");
+  return () => {
+    try {
+      const socket = getSocket();
+      socket.off("newMessages");
+    } catch (err) {
+      console.warn("unsubscribeToMessages skipped:", err.message);
+    }
   };
 };
+
+
+// export const unsubscribeToMessages = () => {
+//   return (dispatch) => {
+//     const socket = getSocket();
+
+//     socket.off("newMessage");
+//   };
+// };
+
 
 
 export default messageSlice.reducer;

@@ -1,14 +1,42 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
-import { fetchMessages } from "../reducers/messageReducer";
+import {
+  fetchMessages,
+  listenToMessages,
+  unsubscribeToMessages,
+} from "../reducers/messageReducer";
+import { fetchMatches } from "../reducers/matchReducer";
 import { useParams } from "react-router-dom";
 import { Loader, UserX } from "lucide-react";
+import MessageInput from "../components/MessageInput";
 
 const ChatPage = () => {
   const dispatch = useDispatch();
   const { authUser } = useSelector((state) => state.auth);
+  const { matches, isLoadingMyMatches } = useSelector((state) => state.match);
+  const { messages } = useSelector((state) => state.message);
   const { id } = useParams();
+  const match = matches.find((match) => match._id === id);
+
+  useEffect(() => {
+    if (authUser && id) {
+      dispatch(fetchMatches());
+      dispatch(fetchMessages(id));
+      dispatch(listenToMessages());
+    }
+    return () => {
+      dispatch(unsubscribeToMessages());
+    };
+  }, [dispatch, authUser, id]);
+
+  if (isLoadingMyMatches) {
+    return <LoadingMessagesUI />;
+  }
+
+  if (!match) {
+    return <MatchNotFound />;
+  }
 
   return (
     <div className="flex flex-col h-screen bg-gray-100 bg-opacity-50">
@@ -18,8 +46,35 @@ const ChatPage = () => {
           <img
             src={match.image || "/avatar.png"}
             className="w-12 h-12 object-cover rounded-full mr-3 border-2 border-pink-300"
+            alt="Match"
           />
           <h2 className="text-xl font-semibold text-gray-800">{match.name}</h2>
+        </div>
+        <div className="flex-grow overflow-y-auto mb-4 bg-white rounded-lg shadow p-4">
+          {messages.length === 0 ? (
+            <p className="text-center text-gray-500 py-8">
+              Shy? Let AI start your conversation with {match.name}
+            </p>
+          ) : (
+            messages.map((msg) => (
+              <div
+                key={msg._id}
+                className={`mb-3 ${
+                  msg.sender === authUser._id ? "text-right" : "text-left"
+                }`}
+              >
+                <span
+                  className={`inline-block p-3 rounded-lg max-w-xs lg:max-w-md ${
+                    msg.sender === authUser._id
+                      ? "bg-pink-500 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                >
+                  {msg.content}
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
@@ -38,13 +93,13 @@ const MatchNotFound = () => (
       <p className="text-gray-600">
         Oops! It seems this match doesn&apos;t exist or has been removed.
       </p>
-      <Link
-        to="/"
+      <a
+        href="/"
         className="mt-6 px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition-colors 
-				focus:outline-none focus:ring-2 focus:ring-pink-300 inline-block"
+                focus:outline-none focus:ring-2 focus:ring-pink-300 inline-block"
       >
         Go Back To Home
-      </Link>
+      </a>
     </div>
   </div>
 );
