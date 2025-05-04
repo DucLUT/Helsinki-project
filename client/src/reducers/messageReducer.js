@@ -39,8 +39,10 @@ export const sendMessage = (receiverId, content) => {
     return async (dispatch, getState) => {
         try {
             const currentMessages = getState().message.messages;
+            const senderId = getState().auth.authUser.user._id; // Correct path to sender ID
+
             const newMessage = {
-                senderId: getState().auth.user.id,
+                sender: {_id: senderId},
                 receiverId,
                 content,
                 createdAt: new Date().toISOString(),
@@ -48,14 +50,17 @@ export const sendMessage = (receiverId, content) => {
 
             // Update the local state immediately
             dispatch(setMessages([...currentMessages, newMessage]));
-            // Send the message through the socket
-            
-            const res = await send({ receiverId, content });
-            console.log("API response wehn sending message:", res); 
-        } catch (error) {
-            toast.error(error.response.data.message || "Failed to send message");
-        }
 
+            // Send the message through the API
+            const res = await send({ receiverId, content });
+            console.log("API response when sending message:", res);
+        } catch (error) {
+            console.error("Error during sendMessage:", error);
+
+            const errorMessage =
+                error.response?.data?.message || "Failed to send message";
+            toast.error(errorMessage);
+        }
     };
 };
 
@@ -75,7 +80,7 @@ export const unsubscribeToMessages = () => {
   return () => {
     try {
       const socket = getSocket();
-      socket.off("newMessages");
+      socket.off("newMessage");
     } catch (err) {
       console.warn("unsubscribeToMessages skipped:", err.message);
     }

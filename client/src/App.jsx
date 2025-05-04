@@ -7,10 +7,10 @@ import { checkAuth } from "./reducers/authReducer";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster } from "react-hot-toast";
+import BotPage from "./pages/BotPage";
 const App = () => {
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.authUser);
-  console.log("Auth User:", authUser);
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
@@ -33,6 +33,7 @@ const App = () => {
         />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/chat/:id" element={<ChatPage />} />
+        <Route path="/ai-practice" element={<BotPage />} />
       </Routes>
       <Toaster />
     </div>

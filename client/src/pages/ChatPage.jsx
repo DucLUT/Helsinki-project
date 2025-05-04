@@ -37,6 +37,7 @@ const ChatPage = () => {
   if (!match) {
     return <MatchNotFound />;
   }
+  console.log("Auth useing", authUser.user._id);
 
   return (
     <div className="flex flex-col h-screen bg-gray-100 bg-opacity-50">
@@ -56,26 +57,34 @@ const ChatPage = () => {
               Shy? Let AI start your conversation with {match.name}
             </p>
           ) : (
-            messages.map((msg) => (
-              <div
-                key={msg._id}
-                className={`mb-3 ${
-                  msg.sender === authUser._id ? "text-right" : "text-left"
-                }`}
-              >
-                <span
-                  className={`inline-block p-3 rounded-lg max-w-xs lg:max-w-md ${
-                    msg.sender === authUser._id
-                      ? "bg-pink-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                >
-                  {msg.content}
-                </span>
-              </div>
-            ))
+            messages.map(
+              (msg) => (
+                console.log("Message", msg),
+                (
+                  <div
+                    key={msg._id}
+                    className={`mb-3 ${
+                      msg.sender._id === authUser.user._id
+                        ? "text-right"
+                        : "text-left"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block p-3 rounded-lg max-w-xs lg:max-w-md ${
+                        msg.sender._id === authUser.user._id
+                          ? "bg-pink-500 text-white"
+                          : "bg-gray-200 text-gray-800"
+                      }`}
+                    >
+                      {msg.content}
+                    </span>
+                  </div>
+                )
+              )
+            )
           )}
         </div>
+        <MessageInput match={match} />
       </div>
     </div>
   );

@@ -2,11 +2,35 @@ import React, { useEffect, useRef, useState } from "react";
 import { Send, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import { sendMessage } from "../reducers/messageReducer";
+import { useDispatch } from "react-redux";
 
 const MessageInput = ({ match }) => {
+  const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiPickerRef = useRef(null);
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (message.trim()) {
+      dispatch(sendMessage(match._id, message));
+      setMessage("");
+    }
+  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target)
+      ) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
     <form onSubmit={handleSendMessage} className="flex relative">
       <button
