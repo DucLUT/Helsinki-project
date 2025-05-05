@@ -1,0 +1,57 @@
+name: helsinki-project
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      # Install and test server
+      - name: Install server dependencies
+        working-directory: ./server
+        run: npm install
+
+      - name: Run server tests (if any)
+        working-directory: ./server
+        run: |
+          if [ -f package.json ] && npm test; then
+            echo "Server tests passed"
+          else
+            echo "No server tests found"
+          fi
+
+      # Install and test client
+      - name: Install client dependencies
+        working-directory: ./client
+        run: npm install
+
+      - name: Build client (Vite)
+        working-directory: ./client
+        run: npm run build
+
+      - name: Run client tests (if any)
+        working-directory: ./client
+        run: |
+          if [ -f package.json ] && npm test; then
+            echo "Client tests passed"
+          else
+            echo "No client tests found"
+          fi

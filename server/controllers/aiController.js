@@ -1,5 +1,4 @@
-import {openai} from "../config/openai.js";
-
+import { openai } from "../config/openai.js";
 
 // Controller for practice chat
 export const practiceConversation = async (req, res) => {
@@ -10,7 +9,7 @@ export const practiceConversation = async (req, res) => {
   }
 
   try {
-    const response = await openai.createChatCompletion({
+    const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
         { role: "system", content: "You are a friendly and engaging conversation partner." },
@@ -18,7 +17,7 @@ export const practiceConversation = async (req, res) => {
       ],
     });
 
-    const reply = response.data.choices[0].message.content.trim();
+    const reply = response.choices[0].message.content.trim();
     res.json({ reply });
   } catch (err) {
     console.error("OpenAI Error (practice):", err);
@@ -37,12 +36,12 @@ export const generatePickupLine = async (req, res) => {
   try {
     const prompt = `Come up with a witty, respectful, and fun opening line to start a conversation with someone named ${matchName}. Their bio: "${matchBio || "No bio"}"`;
 
-    const response = await openai.createChatCompletion({
+    const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [{ role: "user", content: prompt }],
     });
 
-    const pickupLine = response.data.choices[0].message.content.trim();
+    const pickupLine = response.choices[0].message.content.trim();
     res.json({ pickupLine });
   } catch (err) {
     console.error("OpenAI Error (pickup line):", err);

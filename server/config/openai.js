@@ -1,7 +1,7 @@
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from "openai";
 import dotenv from "dotenv";
-const config = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-export const openai = new OpenAIApi(config);
+dotenv.config();
 
+export const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});

@@ -5,7 +5,7 @@ const aiSlice = createSlice({
     name:"ai",
     initialState: {
         messages: [], // { sender: "user" | "bot", content: string }
-        loading: true,
+        loading: false,
     },
     reducers: {
         addMessage: (state, action) => {
@@ -20,13 +20,15 @@ const aiSlice = createSlice({
     }
 })
 export const { addMessage, setLoading, clearMessages } = aiSlice.actions;
+
 export const sendMessage = (message) => {
     return async (dispatch) => {
         dispatch(addMessage({ sender: "user", content: message }));
         dispatch(setLoading(true));
         try {
-            const response = await sendPracticeMessage(message);
-            dispatch(addMessage({ sender: "bot", content: response.data }));
+            const response = await sendPracticeMessage({message: message});
+            console.log('ai response', response)
+            dispatch(addMessage({ sender: "bot", content: response.reply }));
         } catch (error) {
             console.error("Error sending message:", error);
         } finally {

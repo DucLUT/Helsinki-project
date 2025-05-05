@@ -3,6 +3,7 @@ import { Send, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import { sendMessage } from "../reducers/messageReducer";
 import { useDispatch } from "react-redux";
+import { generateSuggestion } from "../reducers/suggestReducer";
 
 const MessageInput = ({ match }) => {
   const dispatch = useDispatch();
@@ -14,6 +15,16 @@ const MessageInput = ({ match }) => {
     if (message.trim()) {
       dispatch(sendMessage(match._id, message));
       setMessage("");
+    }
+  };
+  const handleRizzClick = () => {
+    if (match.name) {
+      dispatch(
+        generateSuggestion({
+          matchName: match.name,
+          matchBio: match.bio,
+        })
+      );
     }
   };
   useEffect(() => {
