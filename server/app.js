@@ -1,5 +1,6 @@
 import express from "express";
-import path from "path"
+import path from 'path';
+import {fileURLToPath} from 'url';
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
@@ -20,12 +21,15 @@ const corsOptions = {
   origin: "http://localhost:5173", // Replace with your frontend's URL
   credentials: true, // Allow credentials (cookies)
 };
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+console.log('directory-name 👉️', __dirname);
+console.log(path.join(__dirname, '../client/dist', 'index.html')); 
 const clientPath = path.join(__dirname, "../client/dist");
 app.use(express.static(clientPath));
-app.get("*", (_req, res ,next) => {
-    res.sendFile(path.join(clientPath, "index.html"));
+app.get("*", (_req, res) => {
+  res.sendFile(path.resolve(clientPath, "index.html"));
 });
-
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
