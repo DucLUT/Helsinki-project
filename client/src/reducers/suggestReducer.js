@@ -23,8 +23,6 @@ export const generateSuggestion = (data) => {
         try {
             const response = await suggest(data);
             console.log('suggestion response', response);
-
-            // Remove surrounding quotes from the pickupLine
             const cleanedPickupLine = response.pickupLine.replace(/^"|"$/g, "");
             dispatch(setSuggestion(cleanedPickupLine));
         } catch (error) {

@@ -9,7 +9,6 @@ const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
-  console.log("authUser in Header:", authUser);
   const handleLogout = () => {
     dispatch(logOut());
   };
@@ -59,20 +58,21 @@ const Header = () => {
                       alt="User image"
                     />
                     <span className="text-white font-medium">
-                      {authUser.user.name} gay
+                      {authUser.user.name}
                     </span>
                   </button>
                   {dropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
                       <Link
-                        to="/profile"
+                        to="/dashboard"
                         className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                         onClick={() => setDropdownOpen(false)}
                       >
                         <User className="mr-2" size={16} />
-                        Profile
+                        Dashboard
                       </Link>
                       <button
+                        to="/auth"
                         onClick={handleLogout}
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                       >
@@ -116,7 +116,7 @@ const Header = () => {
               {authUser ? (
                 <>
                   <Link
-                    to="/profile"
+                    to="/dashboard"
                     className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-pink-700"
                     onClick={() => setMobileMenuOpen(false)}
                   >

@@ -62,7 +62,13 @@ const Sidebar = () => {
           </div>
 
           {/* Footer or anything else */}
-          <div className="bg-green-400 p-4">hello</div>
+          <div className="bg-green-400 p-4">
+            <Link to="/ai-practice">
+              <button className="w-full py-2 px-4 bg-pink-500 text-white font-semibold rounded-lg shadow-md hover:bg-pink-600 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-300">
+                Practice with Bot
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
       <button
