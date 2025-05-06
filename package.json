@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install": "cd frontend && npm install --include=dev && cd ../backend && npm install --include=dev",
-    "build": "cd frontend && npm run build:to:backend",
+    "start": "cd server && npm start",
+    "install": "cd client && npm install --legacy-peer-deps && cd ../server && npm install --legacy-peer-deps",
+    "build": "cd client && npm run build:to:server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

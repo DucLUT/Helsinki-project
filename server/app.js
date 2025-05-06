@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path"
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
@@ -19,6 +20,11 @@ const corsOptions = {
   origin: "http://localhost:5173", // Replace with your frontend's URL
   credentials: true, // Allow credentials (cookies)
 };
+const clientPath = path.join(__dirname, "../client/dist");
+app.use(express.static(clientPath));
+app.get("*", (_req, res ,next) => {
+    res.sendFile(path.join(clientPath, "index.html"));
+});
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -28,7 +34,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/matches", matchRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/ai", aiRoutes);
-app.get("/", (req, res) => {
+app.get("/api/running", (req, res) => {
   res.send("API is running...");
 });
 export default app;
