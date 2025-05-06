@@ -4,6 +4,7 @@ import userReducer from '../reducers/userReducer';
 import matchReducer from '../reducers/matchReducer';
 import messageReducer from '../reducers/messageReducer';
 import aiReducer from '../reducers/aiReducer';
+import suggestReducer from '../reducers/suggestReducer';
 const store = configureStore({
     reducer: {
         auth: authReducer,
@@ -11,6 +12,7 @@ const store = configureStore({
         match: matchReducer,
         message: messageReducer,
         ai: aiReducer,
+        suggest: suggestReducer,
 
     }
 })

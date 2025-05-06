@@ -4,32 +4,35 @@ import { suggest } from "../services/ai";
 const suggestSlice = createSlice({
     name: "suggest",
     initialState: {
-        suggestions: null,
+        suggestion: null,
         loading: false,
     },
     reducers: {
-        setSuggestions: (state, action) => {
-            state.suggestions = action.payload;
+        setSuggestion: (state, action) => {
+            state.suggestion = action.payload;
         },
         setLoading: (state, action) => {
             state.loading = action.payload;
         }
     }
 })
-export const { setSuggestions, setLoading } = suggestSlice.actions;
+export const { setSuggestion, setLoading } = suggestSlice.actions;
 export const generateSuggestion = (data) => {
     return async (dispatch) => {
         dispatch(setLoading(true));
         try {
             const response = await suggest(data);
-            console.log('suggestion response', response)
-            dispatch(setSuggestions(response.pickupLine));
+            console.log('suggestion response', response);
+
+            // Remove surrounding quotes from the pickupLine
+            const cleanedPickupLine = response.pickupLine.replace(/^"|"$/g, "");
+            dispatch(setSuggestion(cleanedPickupLine));
         } catch (error) {
             console.error("Error generating suggestion:", error);
         } finally {
             dispatch(setLoading(false));
         }
-    }
-}
+    };
+};
 
 export default suggestSlice.reducer;
