@@ -54,17 +54,25 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
     const { email, password } = req.body;
     try {
+        console.log("Login request received:", { email, password });
+
         if (!email || !password) {
+            console.log("Missing email or password");
             return res.status(400).json({ message: "Please fill all the fields" });
         }
+
         const user = await User.findOne({ email });
         if (!user) {
+            console.log("User not found");
             return res.status(401).json({ message: "Invalid credentials" });
         }
+
         const isMatch = await bcrypt.compare(password, user.passwordHash);
         if (!isMatch) {
+            console.log("Password does not match");
             return res.status(401).json({ message: "Invalid credentials" });
         }
+
         const token = signToken(user._id);
         res.cookie("jwt", token, {
             httpOnly: true,
@@ -72,17 +80,19 @@ export const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             sameSite: "strict",
         });
+
+        console.log("User logged in successfully:", user);
         res.status(200).json({
             success: true,
             message: "User logged in successfully",
-            token, //just for testing remember to delete this
-            user
+            token, // For testing purposes only
+            user,
         });
     } catch (error) {
-        console.log(error);
+        console.error("Error in login controller:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
-}
+};
 export const logout = async (req, res) => {
     res.clearCookie("jwt");
     res.status(200).json({

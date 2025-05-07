@@ -21,13 +21,7 @@ const corsOptions = {
   origin: process.env.CLIENT_URL || "http://localhost:5173", // Allow frontend origin
   credentials: true, // Allow credentials (cookies)
 };
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const clientPath = path.join(__dirname, "../client/dist");
-app.use(express.static(clientPath));
-app.get("/", (_req, res) => {
-  res.sendFile(path.resolve(clientPath, "index.html"));
-});
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
@@ -39,4 +33,13 @@ app.use("/api/ai", aiRoutes);
 app.get("/api/running", (req, res) => {
   res.send("API is running...");
 });
-export default app;dsddwd
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientPath = path.join(__dirname, "../client/dist");
+app.use(express.static(clientPath));
+app.get("/", (_req, res) => {
+  res.sendFile(path.resolve(clientPath, "index.html"));
+});
+
+export default app;
