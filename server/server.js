@@ -2,7 +2,7 @@ import app from "./app.js";
 import dotenv from "dotenv";
 import { httpServer } from "./app.js";
 dotenv.config();
-
+dotenv.config({ path: './server/.env' });
 const PORT = process.env.PORT || 4000;
 
 process.on("uncaughtException", (err) => {

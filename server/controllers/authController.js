@@ -55,6 +55,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         console.log("Login request received:", { email, password });
+        console.log("Successfully passed the first log."); 
 
         if (!email || !password) {
             console.log("Missing email or password");
@@ -74,19 +75,38 @@ export const login = async (req, res) => {
         }
 
         const token = signToken(user._id);
+        console.log("JWT_SECRET is:", process.env.JWT_SECRET ? "Defined ✅" : "Undefined ❌");
+
+
+        try {
         res.cookie("jwt", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-            sameSite: "strict",
+            secure: false,
+            sameSite: "lax", // safe in same-origin
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
+        } catch (err) {
+        console.error("Error setting cookie:", err);
+        }
+
+        console.log("Setting cookies:", res.getHeaders());
+
+        const safeUser = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            age: user.age,
+            gender: user.gender,
+            genderPreference: user.genderPreference
+};
+
 
         console.log("User logged in successfully:", user);
         res.status(200).json({
             success: true,
             message: "User logged in successfully",
             token, // For testing purposes only
-            user,
+            user: safeUser,
         });
     } catch (error) {
         console.error("Error in login controller:", error);
