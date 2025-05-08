@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Heart, Loader, MessageCircle, X } from "lucide-react";
+import { Heart, Loader, MessageCircle, X, Bot } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchMatches } from "../reducers/matchReducer";
@@ -62,10 +62,10 @@ const Sidebar = () => {
           </div>
 
           {/* Footer or anything else */}
-          <div className="bg-green-400 p-4">
+          <div className="bg-purple-400 p-3 flex items-center justify-center">
             <Link to="/ai-practice">
               <button className="w-full py-2 px-4 bg-pink-500 text-white font-semibold rounded-lg shadow-md hover:bg-pink-600 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-300">
-                Practice with Bot
+                <Bot />
               </button>
             </Link>
           </div>

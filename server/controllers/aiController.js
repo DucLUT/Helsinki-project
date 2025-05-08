@@ -27,11 +27,13 @@ export const practiceConversation = async (req, res) => {
 
 // Controller for generating pickup line
 export const generatePickupLine = async (req, res) => {
+  console.log("Request body:", req.body); 
   const { matchName, matchBio } = req.body;
 
   if (!matchName) {
     return res.status(400).json({ error: "matchName is required" });
   }
+  console.log("match bio is here?", matchBio);
 
   try {
     const prompt = `Come up with a witty, respectful, and fun opening line to start a conversation with someone named ${matchName}. Their bio: "${matchBio || "No bio"}"`;

@@ -20,6 +20,7 @@ export const { setUser, clearUser } = userSlice.actions;
 export const updateProfile = (data) => {
     return async (dispatch) => {
         try {
+            console.log("is this working")
             const user = await updateUser(data);
             dispatch(setUser(user));
         } catch (error) {

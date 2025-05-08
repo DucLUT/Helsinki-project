@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 
 let io;
+//process.env.CLIENT_URL
 
 const connectedUsers = new Map();
 // { userId: socketId }
@@ -8,7 +9,7 @@ const connectedUsers = new Map();
 export const initializeSocket = (httpServer) => {
 	io = new Server(httpServer, {
 		cors: {
-			origin: process.env.CLIENT_URL,
+			origin: "http://localhost:5173",
 			credentials: true,
 		},
 	});

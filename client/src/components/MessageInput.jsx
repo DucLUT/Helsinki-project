@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Send, Smile, Loader } from "lucide-react";
+import { Send, Smile, Loader, Bot } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import { sendMessage } from "../reducers/messageReducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,13 +19,13 @@ const MessageInput = ({ match }) => {
       setMessage("");
     }
   };
-
+  console.log("this is when u click handleRizz", match);
   const handleRizzClick = async () => {
     if (match.name) {
       dispatch(
         generateSuggestion({
           matchName: match.name,
-          matchBio: match.bio,
+          matchBio: match.biography,
         })
       );
     }
@@ -73,9 +73,13 @@ const MessageInput = ({ match }) => {
             ? "bg-gray-200 text-gray-400 cursor-not-allowed"
             : "bg-pink-100 text-pink-600 hover:bg-pink-200 transition-colors"
         }`}
-        disabled={loading} // Disable the button while loading
+        disabled={loading}
       >
-        {loading ? <Loader className="animate-spin" size={16} /> : "Use Rizz"}
+        {loading ? (
+          <Loader className="animate-spin" size={16} />
+        ) : (
+          <Bot size={16} />
+        )}
       </button>
 
       {/* Message Input */}

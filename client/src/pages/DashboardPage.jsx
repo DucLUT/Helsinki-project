@@ -18,7 +18,7 @@ const DashboardPage = () => {
   useEffect(() => {
     if (authUser?.user) {
       setName(authUser.user.name || "");
-      setBio(authUser.user.bio || "");
+      setBio(authUser.user.biography || "");
       setAge(authUser.user.age || "");
       setGender(authUser.user.gender || "");
       setGenderPreference(authUser.user.genderPreference || "");

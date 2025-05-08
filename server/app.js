@@ -17,8 +17,23 @@ connectDB();
 export const httpServer = createServer(app); 
 initializeSocket(httpServer);
 
+app.use((req, res, next) => {
+  // Basic CSP example - adjust 'self', 'unsafe-inline', etc. based on your needs
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval';"
+  );
+  next();
+});
+let CLIENT_AT_THE_MOMENT;
+if (process.env.NODE_ENV === "development") {
+  CLIENT_AT_THE_MOMENT=process.env.CLIENT_URL_DEV
+} else if (process.env.NODE_ENV === "production"){
+  CLIENT_AT_THE_MOMENT=process.env.CLIENT_URL
+}
+console.log("at the moment", CLIENT_AT_THE_MOMENT)
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://localhost:5173", // Allow frontend origin
+  origin:CLIENT_AT_THE_MOMENT, // Allow frontend origin  process.env.CLIENT_URL || 
   credentials: true, // Allow credentials (cookies)
 };
 
@@ -38,8 +53,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const clientPath = path.join(__dirname, "../client/dist");
 app.use(express.static(clientPath));
-app.get("/", (_req, res) => {
+app.get("/{*splat}", (_req, res) => {
   res.sendFile(path.resolve(clientPath, "index.html"));
 });
+
 
 export default app;

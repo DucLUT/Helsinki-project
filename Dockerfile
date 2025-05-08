@@ -28,6 +28,8 @@ WORKDIR /app/client
 COPY client/package*.json /app/client/
 RUN npm install --omit=dev --legacy-peer-deps
 
+ENV NODE_ENV=production
+
 EXPOSE 8080
 
 CMD ["node", "server/server.js"]

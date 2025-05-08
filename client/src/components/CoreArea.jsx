@@ -47,7 +47,7 @@ const CoreArea = () => {
               <h2 className="card-title text-2xl text-gray-800">
                 {user.name}, {user.age}
               </h2>
-              <p className="text-gray-600">{user.bio}</p>
+              <p className="text-gray-600">{user.biography}</p>
             </div>
           </div>
         </TinderCard>
