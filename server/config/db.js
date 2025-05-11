@@ -3,18 +3,24 @@ import dotenv from 'dotenv';
 dotenv.config();
 let MONGO_URI = process.env.MONGO_URI;
 if (process.env.NODE_ENV === 'test') {
-  MONGO_URI = process.env.MONGO_URI_TEST;
+  MONGO_URI = process.env.TEST_MONGODB_URI;
 }
+console.log('Mongo URI:', MONGO_URI);
 
-export const connectDB = async () => {
+export const connectDB = async (force = false) => {
+  if (mongoose.connection.readyState >= 1 && !force) return;
+  if (force && mongoose.connection.readyState !== 0) {
+    await mongoose.connection.close();
+  }
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI); // Remove deprecated options
+    const conn = await mongoose.connect(MONGO_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`Error: ${error.message}`);
-    process.exit(1); // Exit process if connection fails
+    process.exit(1);
   }
 };
+
 export const disconnectDB = async () => {
   try {
     await mongoose.connection.close();
