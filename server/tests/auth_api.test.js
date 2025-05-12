@@ -1,89 +1,116 @@
 import request from 'supertest';
-import app from '../app.js';
+import app, { httpServer } from '../app.js';
 import { connectDB, clearDB, disconnectDB } from '../config/db.js';
-import User from '../models/User.js';
+import mongoose from 'mongoose';
 
-let server;
-let agent;
+const agent = request.agent(httpServer); // Use agent to persist cookies
 
-const userData = {
+const validUser = {
   name: 'Test User',
   userName: 'testuser',
   email: 'test@example.com',
   password: 'password123',
-  age: 21,
+  age: 25,
   gender: 'male',
   genderPreference: 'female',
 };
 
-beforeAll(async () => {
-  process.env.NODE_ENV = 'test';
-  await connectDB();
-  server = app.listen(0); // dynamic port
-  agent = request.agent(server); // persistent session
-});
+await connectDB(true);
 
 afterAll(async () => {
-  await clearDB();
   await disconnectDB();
-  server.close();
+  httpServer.close();
 });
 
-describe('Auth Routes', () => {
-  test('POST /api/auth/signup - should register a user', async () => {
-    const res = await agent.post('/api/auth/signup').send(userData);
+beforeEach(async () => {
+  await clearDB();
+});
 
-    expect(res.statusCode).toBe(201);
-    expect(res.body.success).toBe(true);
-    expect(res.body.user._id).toBeDefined();
-    expect(res.body.token).toBeDefined(); // for test only
-  });
-
-  test('POST /api/auth/signup - missing fields returns 400', async () => {
-    const res = await agent
-      .post('/api/auth/signup')
-      .send({ email: 'test@example.com' }); // insufficient data
-
-    expect(res.statusCode).toBe(400);
-    expect(res.body.message).toMatch(/fill all the fields/i);
-  });
-
-  test('POST /api/auth/login - should log in with correct credentials', async () => {
-    const res = await agent.post('/api/auth/login').send({
-      email: userData.email,
-      password: userData.password,
+describe('Auth API', () => {
+  describe('POST /api/auth/signup', () => {
+    it('should create a new user and set cookie', async () => {
+      const res = await agent.post('/api/auth/signup').send(validUser);
+      expect(res.statusCode).toBe(201);
+      expect(res.body.success).toBe(true);
+      expect(res.body.user.email).toBe(validUser.email);
+      expect(res.headers['set-cookie']).toBeDefined();
+    });
+    it('should not allow signup with missing fields', async () => {
+      const res = await agent.post('/api/auth/signup').send({
+        ...validUser,
+        email: '',
+      });
+      expect(res.statusCode).toBe(400);
+      expect(res.body.message).toMatch(/fill all the fields/i);
     });
 
-    expect(res.statusCode).toBe(200);
-    expect(res.body.success).toBe(true);
-    expect(res.body.token).toBeDefined(); // for test only
+    it('should not allow underage signup', async () => {
+      const res = await agent.post('/api/auth/signup').send({
+        ...validUser,
+        age: 17,
+      });
+      expect(res.statusCode).toBe(400);
+      expect(res.body.message).toMatch(/at least 18/i);
+    });
   });
 
-  test('POST /api/auth/login - wrong password returns 401', async () => {
-    const res = await agent.post('/api/auth/login').send({
-      email: userData.email,
-      password: 'wrongpassword',
+  describe('POST /api/auth/login', () => {
+    beforeEach(async () => {
+      await agent.post('/api/auth/signup').send(validUser);
     });
 
-    expect(res.statusCode).toBe(401);
-    expect(res.body.message).toMatch(/invalid credentials/i);
+    it('should login successfully and set cookie', async () => {
+      const res = await agent.post('/api/auth/login').send({
+        email: validUser.email,
+        password: validUser.password,
+      });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.user.email).toBe(validUser.email);
+      expect(res.headers['set-cookie']).toBeDefined();
+    });
+
+    it('should fail login with wrong password', async () => {
+      const res = await agent.post('/api/auth/login').send({
+        email: validUser.email,
+        password: 'wrongpassword',
+      });
+      expect(res.statusCode).toBe(401);
+      expect(res.body.message).toMatch(/invalid credentials/i);
+    });
+
+    it('should fail login with unknown email', async () => {
+      const res = await agent.post('/api/auth/login').send({
+        email: 'notfound@example.com',
+        password: 'password123',
+      });
+      expect(res.statusCode).toBe(401);
+      expect(res.body.message).toMatch(/invalid credentials/i);
+    });
   });
 
-  test('GET /api/auth/me - should return user if logged in', async () => {
-    // Log in to get the token
-    const loginRes = await agent.post('/api/auth/login').send({
-      email: userData.email,
-      password: userData.password,
+  describe('GET /api/auth/me', () => {
+    it('should return user if authenticated', async () => {
+      await agent.post('/api/auth/signup').send(validUser);
+      const res = await agent.get('/api/auth/me');
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.user.email).toBe(validUser.email);
     });
 
-    expect(loginRes.statusCode).toBe(200);
-    expect(loginRes.headers['set-cookie']).toBeDefined();
+    it('should return 401 if not authenticated', async () => {
+      const unauthAgent = request.agent(httpServer);
+      const res = await unauthAgent.get('/api/auth/me');
+      expect(res.statusCode).toBe(401);
+    });
+  });
 
-    // Make the request to /api/auth/me
-    const res = await agent.get('/api/auth/me');
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body.success).toBe(true);
-    expect(res.body.user.email).toBe(userData.email);
+  describe('POST /api/auth/logout', () => {
+    it('should clear the cookie on logout', async () => {
+      await agent.post('/api/auth/signup').send(validUser);
+      const res = await agent.post('/api/auth/logout');
+      expect(res.statusCode).toBe(200);
+      expect(res.body.message).toMatch(/logged out/i);
+    });
   });
 });

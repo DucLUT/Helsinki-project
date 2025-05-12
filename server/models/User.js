@@ -1,59 +1,68 @@
-import mongoose from "mongoose";
-
-const userSchema = new mongoose.Schema({
+import mongoose from 'mongoose';
+console.log(
+  'Loaded User model with mongoose connection ID:',
+  mongoose.connection.id
+);
+const userSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     userName: {
-        type: String,
-        //TODO: working on this later
+      type: String,
+      //TODO: working on this later
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      required: true,
+      unique: true,
     },
     passwordHash: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     age: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     gender: {
-        type: String,
-        required: true,
-        enum: ['male', 'female', 'other'],
+      type: String,
+      required: true,
+      enum: ['male', 'female', 'other'],
     },
     genderPreference: {
-        type: String,
-        required: true,
-        enum: ['male', 'female', 'both']
+      type: String,
+      required: true,
+      enum: ['male', 'female', 'both'],
     },
     biography: {
-        type: String,
+      type: String,
     },
     image: {
-        type: String,
+      type: String,
     },
-    likes: [{
+    likes: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    dislikes: [{
+        ref: 'User',
+      },
+    ],
+    dislikes: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    matches: [{
+        ref: 'User',
+      },
+    ],
+    matches: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
+        ref: 'User',
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
-
-
-}, {timestamps: true});
-
-const User = mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 export default User;

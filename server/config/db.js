@@ -31,13 +31,15 @@ export const disconnectDB = async () => {
 };
 export const clearDB = async () => {
   try {
+    console.log('Clearing database...');
     const collections = await mongoose.connection.db.collections();
     for (let collection of collections) {
+      console.log(`Clearing collection: ${collection.collectionName}`);
       await collection.deleteMany({});
     }
-    console.log('MongoDB Cleared');
+    console.log('Database cleared successfully.');
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(`Error clearing database: ${error.message}`);
   }
 };
 export const dropDB = async () => {
@@ -50,9 +52,9 @@ export const dropDB = async () => {
 };
 export const seedDB = async () => {
   try {
-    // Add your seeding logic here
     console.log('MongoDB Seeded');
   } catch (error) {
     console.error(`Error: ${error.message}`);
   }
 };
+export { mongoose };

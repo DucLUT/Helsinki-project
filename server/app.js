@@ -11,9 +11,7 @@ import userRoutes from './routes/userRoutes.js';
 import matchRoutes from './routes/matchRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
-import { connectDB } from './config/db.js';
 
-connectDB();
 export const httpServer = createServer(app);
 initializeSocket(httpServer);
 
@@ -47,6 +45,7 @@ app.use('/api/ai', aiRoutes);
 app.get('/api/running', (req, res) => {
   res.send('API is running...');
 });
+console.log('Match routes mounted at /api/matches');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
