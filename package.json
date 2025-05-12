@@ -7,7 +7,7 @@
     "start": "cd server && npm start",
     "install": "cd client && npm install --legacy-peer-deps && cd ../server && npm install --legacy-peer-deps",
     "build": "cd client && npm run build:to:server",
-    "test": "node --test"
+    "test": "cd server && npm test"
   },
   "author": "",
   "license": "ISC"

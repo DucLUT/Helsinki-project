@@ -1,57 +1,33 @@
-name: helsinki-project
+name: on pull to main
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          node-version: "22"
 
-      # Install and test server
-      - name: Install server dependencies
-        working-directory: ./server
+      - name: Install dependencies
         run: npm install
 
-      - name: Run server tests (if any)
-        working-directory: ./server
-        run: |
-          if [ -f package.json ] && npm test; then
-            echo "Server tests passed"
-          else
-            echo "No server tests found"
-          fi
+      - name: Run tests
+        run: npm test
 
-      # Install and test client
-      - name: Install client dependencies
-        working-directory: ./client
-        run: npm install
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Build client (Vite)
-        working-directory: ./client
-        run: npm run build
-
-      - name: Run client tests (if any)
-        working-directory: ./client
-        run: |
-          if [ -f package.json ] && npm test; then
-            echo "Client tests passed"
-          else
-            echo "No client tests found"
-          fi
+      - name: Build and push Docker image
+        run: docker build -t $HEROKU_APP_NAME .
