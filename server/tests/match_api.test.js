@@ -33,6 +33,10 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  await clearDB();
+  const usersAfterClear = await User.find();
+  console.log('Users after clearDB:', usersAfterClear);
+
   const signupA = await agent.post('/api/auth/signup').send(userAdata);
   expect(signupA.statusCode).toBe(201);
   console.log('User A created:', signupA.body.user);
