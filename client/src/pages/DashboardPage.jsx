@@ -42,7 +42,6 @@ const DashboardPage = () => {
       reader.readAsDataURL(file);
     }
   };
-  console.log("image", image);
 
   // ✅ Now we put this AFTER all hook calls
   if (!authUser) {

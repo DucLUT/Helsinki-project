@@ -24,10 +24,6 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(fetchUserProfiles());
   }, [dispatch]);
-  console.log(
-    "checking if this works for user profiles matchable: ",
-    userProfiles
-  );
   useEffect(() => {
     authUser && dispatch(listenToNewMatches());
     return () => {
@@ -64,9 +60,9 @@ export default HomePage;
 
 const NoMoreProfiles = () => (
   <div className="flex flex-col items-center justify-center h-full text-center p-8">
-    <Frown className="text-pink-400 mb-6" size={80} />
-    <h2 className="text-3xl font-bold text-gray-800 mb-4">database draining</h2>
-    <p className="text-xl text-gray-600 mb-6">No one likes u</p>
+    <Frown className="text-purple-300 mb-6" size={80} />
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">Empty</h2>
+    <p className="text-xl text-gray-600 mb-6">Not many people on here</p>
   </div>
 );
 

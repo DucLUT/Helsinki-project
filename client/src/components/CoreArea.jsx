@@ -9,13 +9,11 @@ const CoreArea = () => {
   const handleSwipe = (direction, user) => {
     if (direction === "right") {
       // Handle right swipe (like)
-      console.log("Liked:", user);
       dispatch(swipeRight(user));
       // Dispatch an action to update the match state
       // dispatch(likeUser(user._id));
     } else if (direction === "left") {
       // Handle left swipe (dislike)
-      console.log("Disliked:", user);
       dispatch(swipeLeft(user));
       // Dispatch an action to update the match state
       // dispatch(dislikeUser(user._id));

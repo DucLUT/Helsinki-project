@@ -19,7 +19,6 @@ const MessageInput = ({ match }) => {
       setMessage("");
     }
   };
-  console.log("this is when u click handleRizz", match);
   const handleRizzClick = async () => {
     if (match.name) {
       dispatch(

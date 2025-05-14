@@ -31,13 +31,13 @@ const Header = () => {
   }
   return (
     <div>
-      <header className="bg-gradient-to-r from-pink-200 via-pink-500 to-pink-700 text-white shadow-lg">
+      <header className="bg-gradient-to-r from-pink-200 via-pink-500 to-purple-500 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <Link to="/" className="flex items-center space-x-2">
                 <Flame className="w-8 h-8 text-white" />
-                <span className="text-2xl font-bold text-white hidden sm:inline">
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-100 to-green-100 bg-clip-text text-transparent hidden sm:inline">
                   Dertin
                 </span>
               </Link>
@@ -54,7 +54,7 @@ const Header = () => {
                   >
                     <img
                       src={authUser.user.image || "/avatar.png"}
-                      className="h-10 w-10 object-cover rounded-full border-2 border-white"
+                      className="h-10 w-10 object-cover rounded-full border-2 border-white shadow-md hover:shadow-lg transition-shadow"
                       alt="User image"
                     />
                     <span className="text-white font-medium">

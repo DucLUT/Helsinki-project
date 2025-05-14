@@ -37,7 +37,6 @@ const ChatPage = () => {
   if (!match) {
     return <MatchNotFound />;
   }
-  console.log("Auth useing", authUser.user._id);
 
   return (
     <div className="flex flex-col h-screen bg-gray-100 bg-opacity-50">
