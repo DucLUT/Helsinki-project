@@ -98,3 +98,8 @@ Table:
 | 05.16.2025 | Adding CSP and large payload handle for server | 3 |
 | **Total** | | **143** |
 
+*CICD pipleline*
+![CICD](uml/cicd.png)
+
+*Reference:
+https://www.youtube.com/watch?v=o-XOBJRNeqk&list=LL&index=7&t=17900s
