@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
+import bodyParser from 'body-parser';
 const app = express();
 import { initializeSocket } from './socket/socket.js';
 import authRoutes from './routes/authRoutes.js';
