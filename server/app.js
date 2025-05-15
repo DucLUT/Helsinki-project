@@ -16,10 +16,9 @@ export const httpServer = createServer(app);
 initializeSocket(httpServer);
 
 app.use((req, res, next) => {
-  // Basic CSP example - adjust 'self', 'unsafe-inline', etc. based on your needs
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval';"
+    "default-src 'self'; img-src 'self' data: https://res.cloudinary.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval';"
   );
   next();
 });
